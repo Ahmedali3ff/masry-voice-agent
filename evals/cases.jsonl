@@ -1,0 +1,10 @@
+{"text": "عايز احجز كشف يوم الحد الجاي", "expect_tool": "get_available_slots"}
+{"text": "فيه مواعيد فاضية بكرة؟", "expect_tool": "get_available_slots"}
+{"text": "محتاج ميعاد بعد الضهر يوم التلات", "expect_tool": "get_available_slots"}
+{"text": "عندي ميعاد امتى؟ موبايلي 01099998888", "expect_tool": "find_appointment"}
+{"text": "عاوز اعرف ميعادي اللي حجزته، رقمي 01234567890", "expect_tool": "find_appointment"}
+{"text": "عايز الغي الحجز رقم A1B2C3", "expect_tool": "cancel_appointment"}
+{"text": "ازيك يا سلمى", "expect_tool": null}
+{"text": "العيادة بتفتح امتى؟", "expect_tool": null}
+{"text": "مين الدكتور بتاعكم؟", "expect_tool": null}
+{"text": "سعر الدولار النهاردة كام؟", "expect_tool": null}

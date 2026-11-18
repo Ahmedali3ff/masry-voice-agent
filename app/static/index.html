@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang='ar' dir='rtl'>
+<head>
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>سلمى - مساعد صوتي</title>
+<style>
+body{font-family:system-ui,sans-serif;max-width:480px;margin:40px auto;padding:0 16px;text-align:center}
+button{font-size:1.1rem;padding:14px 28px;border-radius:999px;border:0;background:#0a7;color:#fff;cursor:pointer}
+button.rec{background:#d33}
+#log{margin-top:24px;text-align:right;line-height:1.9}
+.u{color:#555}.a{font-weight:600}
+</style>
+</head>
+<body>
+<h2>سلمى 🎙️</h2>
+<p>اضغط وكلمني بالمصري: احجز، الغي، أو استعلم عن ميعاد</p>
+<button id='b'>ابدأ التسجيل</button>
+<div id='log'></div>
+<script>
+const sid = crypto.randomUUID();
+let rec, chunks = [];
+const b = document.getElementById('b'), log = document.getElementById('log');
+function add(cls, t) {
+  const p = document.createElement('p');
+  p.className = cls; p.textContent = t; log.appendChild(p);
+}
+b.onclick = async () => {
+  if (rec && rec.state === 'recording') { rec.stop(); return; }
+  const stream = await navigator.mediaDevices.getUserMedia({audio: true});
+  rec = new MediaRecorder(stream); chunks = [];
+  rec.ondataavailable = e => chunks.push(e.data);
+  rec.onstop = async () => {
+    stream.getTracks().forEach(t => t.stop());
+    b.classList.remove('rec'); b.textContent = 'بفكر...'; b.disabled = true;
+    const fd = new FormData();
+    fd.append('session_id', sid);
+    fd.append('audio', new Blob(chunks, {type: rec.mimeType}), 'a.webm');
+    try {
+      const r = await fetch('/voice', {method: 'POST', body: fd});
+      add('u', 'أنت: ' + decodeURIComponent(r.headers.get('X-Transcript')));
+      add('a', 'سلمى: ' + decodeURIComponent(r.headers.get('X-Reply')));
+      new Audio(URL.createObjectURL(await r.blob())).play();
+    } catch (e) { add('a', 'حصل خطأ'); }
+    b.disabled = false; b.textContent = 'ابدأ التسجيل';
+  };
+  rec.start(); b.classList.add('rec'); b.textContent = 'وقّف التسجيل';
+};
+</script>
+</body>
+</html>
